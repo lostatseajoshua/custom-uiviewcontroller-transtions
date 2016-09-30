@@ -1,6 +1,7 @@
 # custom-uiviewcontroller-transtions
 
-Implementation of custom UIViewController transitions. The goal of this project is to give a base implementation of how to create simple custom transition between UIViewControllers.
+Implementation of custom UIViewController transitions. The goal of this project is to give a base implementation of how to create simple custom transition between UIViewControllers. 
+###### This project was created for a presentation I gave at the [Boulder iOS September Meetup](https://www.meetup.com/Boulder-iOS/events/233561765/)
 
 ### Prerequisites
 
