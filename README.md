@@ -24,6 +24,9 @@ Tapping on `present` will display a custom modal presentation transition.
 ##### Interactive Animation
 Performing a pinch gesture on the first tab view controller will be activate the interactive transition.
 
+#### UI Test
+Run the UI test target and view a demo of the transitions on the simulator! In Xcode press `CMD+U`
+
 ## Known Issues
 The interactive transition in the project lags in the simulator.
 Workaround: Run on an actual iOS device which displays no lag.
