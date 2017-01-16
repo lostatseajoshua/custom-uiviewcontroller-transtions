@@ -16,49 +16,49 @@ class PushPopViewControllerAnimatedTransitioning: NSObject, UIViewControllerAnim
         super.init()
     }
     
-    func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        guard let toViewVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey), fromViewVC = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey), containerView = transitionContext.containerView() else {
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        guard let toViewVC = transitionContext.viewController(forKey: .to), let fromViewVC = transitionContext.viewController(forKey: .from) else {
             return
         }
         
         if presenting {
             // when presenting
-            containerView.addSubview(toViewVC.view)
+           transitionContext.containerView.addSubview(toViewVC.view)
             
             toViewVC.view.alpha = 0
             // fade in on presenting
-            UIView.animateWithDuration(transitionDuration(transitionContext), animations: {
+            UIView.animate(withDuration: transitionDuration(using: transitionContext), animations: {
                 toViewVC.view.alpha = 1
                 }, completion: { completed in
                     transitionContext.completeTransition(completed)
             })
         } else {
             let numberOfBlinks = 5
-            let duration = transitionDuration(transitionContext)
+            let duration = transitionDuration(using: transitionContext)
             
             // fade out and in on dismissing
-            UIView.animateKeyframesWithDuration(duration, delay: 0, options: .CalculationModeLinear, animations: {
+            UIView.animateKeyframes(withDuration: duration, delay: 0, options: UIViewKeyframeAnimationOptions(), animations: {
                 var time = 0.0
                 for _ in 0...numberOfBlinks {
-                    UIView.addKeyframeWithRelativeStartTime(time, relativeDuration: duration / Double(numberOfBlinks), animations: {
+                    UIView.addKeyframe(withRelativeStartTime: time, relativeDuration: duration / Double(numberOfBlinks), animations: {
                         fromViewVC.view.frame.origin.x -= toViewVC.view.frame.width
                     })
                     time += (duration / Double(numberOfBlinks)) / duration
                 }
                 }, completion: { completed in
-                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled() && completed)
+                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled && completed)
             })
             
             // when dismiss
-            containerView.insertSubview(toViewVC.view, belowSubview: fromViewVC.view)
+            transitionContext.containerView.insertSubview(toViewVC.view, belowSubview: fromViewVC.view)
         }
     }
     
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 2.0
     }
     
-    func animationEnded(transitionCompleted: Bool) {
+    func animationEnded(_ transitionCompleted: Bool) {
         // clean up work if needed
     }
 }

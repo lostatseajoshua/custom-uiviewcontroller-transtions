@@ -19,7 +19,7 @@ class TabBarViewController: UITabBarController {
 }
 
 extension TabBarViewController: UITabBarControllerDelegate {
-    func tabBarController(tabBarController: UITabBarController, animationControllerForTransitionFromViewController fromVC: UIViewController, toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func tabBarController(_ tabBarController: UITabBarController, animationControllerForTransitionFrom fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         // return the animator for the tab bar controller
         return CurlUpViewControllerAnimatedTransitioning(isPresenting: true)
     }

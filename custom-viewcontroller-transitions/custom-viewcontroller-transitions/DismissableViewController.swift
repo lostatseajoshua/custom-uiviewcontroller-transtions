@@ -14,7 +14,7 @@ class DismissableViewController: UIViewController {
         super.viewDidLoad()
         title = "View Controller"
     }
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        dismissViewControllerAnimated(true, completion: nil)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        dismiss(animated: true, completion: nil)
     }
 }

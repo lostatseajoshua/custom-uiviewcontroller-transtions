@@ -19,8 +19,8 @@ class NavigationViewController: UINavigationController {
 }
 
 extension NavigationViewController: UINavigationControllerDelegate {
-    func navigationController(navigationController: UINavigationController, animationControllerForOperation operation: UINavigationControllerOperation, fromViewController fromVC: UIViewController, toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationControllerOperation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         // Provide the animator object
-        return PushPopViewControllerAnimatedTransitioning(isPresenting: operation == .Push)
+        return PushPopViewControllerAnimatedTransitioning(isPresenting: operation == .push)
     }
 }

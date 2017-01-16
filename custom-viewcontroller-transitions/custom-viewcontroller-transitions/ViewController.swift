@@ -30,18 +30,18 @@ class ViewController: UIViewController {
         view.addGestureRecognizer(swipeGesture)
     }
     
-    @IBAction func presentModal(sender: UIButton) {
+    @IBAction func presentModal(_ sender: UIButton) {
         // create the to view controller
         let toVC = getModalPresentationVC()
         // set the transitioning delegate
         toVC.transitioningDelegate = presentingCoordinator
         // present the view animated
-        presentViewController(toVC, animated: true, completion: nil)
+        present(toVC, animated: true, completion: nil)
     }
     
-    func handleGesture(sender: UIPinchGestureRecognizer) {
+    func handleGesture(_ sender: UIPinchGestureRecognizer) {
         switch sender.state {
-        case .Began:
+        case .began:
             // create the to view controller
             let toVC = getModalPresentationVC()
             // set the transitioning delegate
@@ -51,9 +51,9 @@ class ViewController: UIViewController {
             // set the interactive to pass through the delegate
             presentingCoordinator.interactive = interactiveCoordinator
             // present the view animated
-            presentViewController(toVC, animated: true, completion: nil)
-        case .Cancelled, .Ended, .Failed:
-            interactiveCoordinator?.finishInteractiveTransition()
+            present(toVC, animated: true, completion: nil)
+        case .cancelled, .ended, .failed:
+            interactiveCoordinator?.finish()
             presentingCoordinator.interactive = nil
             interactiveCoordinator = nil
         default:
@@ -64,6 +64,6 @@ class ViewController: UIViewController {
     
     // - MARK: Utility
     func getModalPresentationVC() -> UIViewController {
-        return UIStoryboard(name: Identifier.mainStoryboardId, bundle: nil).instantiateViewControllerWithIdentifier(Identifier.modalPresentationControllerId)
+        return UIStoryboard(name: Identifier.mainStoryboardId, bundle: nil).instantiateViewController(withIdentifier: Identifier.modalPresentationControllerId)
     }
 }
