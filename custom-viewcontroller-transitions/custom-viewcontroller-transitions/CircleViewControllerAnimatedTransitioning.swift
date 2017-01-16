@@ -16,8 +16,8 @@ class CircleViewControllerAnimatedTransitioning: NSObject, UIViewControllerAnima
         super.init()
     }
     
-    func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        guard let toViewVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey), fromViewVC = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey), containerView = transitionContext.containerView() else {
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        guard let toViewVC = transitionContext.viewController(forKey: .to), let fromViewVC = transitionContext.viewController(forKey: .from) else {
             return
         }
         
@@ -28,20 +28,20 @@ class CircleViewControllerAnimatedTransitioning: NSObject, UIViewControllerAnima
             circleView.backgroundColor = toViewVC.view.backgroundColor
             circleView.layer.cornerRadius = circleView.frame.height / 2
             
-            containerView.addSubview(circleView)
-            containerView.addSubview(toViewVC.view)
+            transitionContext.containerView.addSubview(circleView)
+            transitionContext.containerView.addSubview(toViewVC.view)
             toViewVC.view.alpha = 0
             
             let relativeKeyFrameDuration = 1.0 / 3
-            UIView.animateKeyframesWithDuration(transitionDuration(transitionContext), delay: 0.0, options: .CalculationModeLinear, animations: {
-                UIView.addKeyframeWithRelativeStartTime(0.0, relativeDuration: relativeKeyFrameDuration, animations: {
+            UIView.animateKeyframes(withDuration: transitionDuration(using: transitionContext), delay: 0.0, options: UIViewKeyframeAnimationOptions(), animations: {
+                UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: relativeKeyFrameDuration, animations: {
                     circleView.center = toViewVC.view.center
                 })
-                UIView.addKeyframeWithRelativeStartTime(0.3, relativeDuration: relativeKeyFrameDuration, animations: {
-                    circleView.transform = CGAffineTransformMakeScale(0.5, 0.5)
+                UIView.addKeyframe(withRelativeStartTime: 0.3, relativeDuration: relativeKeyFrameDuration, animations: {
+                    circleView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
                 })
-                UIView.addKeyframeWithRelativeStartTime(0.6, relativeDuration: relativeKeyFrameDuration, animations: {
-                    circleView.transform = CGAffineTransformMakeScale(10, 10)
+                UIView.addKeyframe(withRelativeStartTime: 0.6, relativeDuration: relativeKeyFrameDuration, animations: {
+                    circleView.transform = CGAffineTransform(scaleX: 10, y: 10)
                     toViewVC.view.alpha = 1
                 })
             }, completion: { completed in
@@ -51,27 +51,27 @@ class CircleViewControllerAnimatedTransitioning: NSObject, UIViewControllerAnima
         } else {
             let maskViewHeight = fromViewVC.view.bounds.height * 1.1
             let maskView = UIView(frame: CGRect(x: 0, y: 0, width: maskViewHeight, height: maskViewHeight))
-            maskView.center = containerView.center
+            maskView.center = transitionContext.containerView.center
             maskView.backgroundColor = fromViewVC.view.backgroundColor
             maskView.alpha = 1
             maskView.layer.cornerRadius = maskView.frame.height / 2
             
-            containerView.insertSubview(maskView, aboveSubview: fromViewVC.view)
+            transitionContext.containerView.insertSubview(maskView, aboveSubview: fromViewVC.view)
             fromViewVC.view.alpha = 0
             
-            UIView.animateWithDuration(transitionDuration(transitionContext), delay: 0.0, options: .CurveLinear, animations: {
-                maskView.transform = CGAffineTransformMakeScale(0.01, 0.01)
+            UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0.0, options: .curveLinear, animations: {
+                maskView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
             }, completion: { completed in
                     maskView.removeFromSuperview()
                     transitionContext.completeTransition(completed)
             })
             
             // when dismiss
-            containerView.insertSubview(toViewVC.view, belowSubview: fromViewVC.view)
+            transitionContext.containerView.insertSubview(toViewVC.view, belowSubview: fromViewVC.view)
         }
     }
     
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 2.0
     }
 }
@@ -80,25 +80,25 @@ class CircleInteractiveController: UIPercentDrivenInteractiveTransition {
     
     var interactive = false
     
-    private var shouldCompleteTransition = false
+    fileprivate var shouldCompleteTransition = false
     var startScale:CGFloat = 0.0
     
-    func handleGesture(gr: UIPinchGestureRecognizer) {
+    func handleGesture(_ gr: UIPinchGestureRecognizer) {
         switch gr.state {
-        case .Began:
+        case .began:
             startScale = gr.scale
             interactive = true
-        case .Changed:
+        case .changed:
             let progress = 1.0 - (gr.scale / startScale)
             print(progress)
-            updateInteractiveTransition(progress < 0.0 ? 0.0 : progress)
-        case .Cancelled:
+            update(progress < 0.0 ? 0.0 : progress)
+        case .cancelled:
             interactive = false
-            cancelInteractiveTransition()
-        case .Ended:
+            cancel()
+        case .ended:
             interactive = false
             if gr.velocity <= 0.0 {
-                finishInteractiveTransition()
+                finish()
             }
         default:
             print("Unsupported")
@@ -119,23 +119,23 @@ class PresentingViewControllerTransitionCoordinator: NSObject, UIViewControllerT
         self.interactive = interactive
     }
     
-    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return CircleViewControllerAnimatedTransitioning(isPresenting: false)
     }
     
-    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return CircleViewControllerAnimatedTransitioning(isPresenting: true)
     }
     
-    func interactionControllerForDismissal(animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return nil
     }
     
-    func interactionControllerForPresentation(animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+    func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return interactive
     }
     
-    func presentationControllerForPresentedViewController(presented: UIViewController, presentingViewController presenting: UIViewController, sourceViewController source: UIViewController) -> UIPresentationController? {
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return nil
     }
 }

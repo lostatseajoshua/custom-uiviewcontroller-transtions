@@ -16,21 +16,21 @@ class CurlUpViewControllerAnimatedTransitioning: NSObject, UIViewControllerAnima
         super.init()
     }
     
-    func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        guard let toViewVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey), fromViewVC = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey), containerView = transitionContext.containerView() else {
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        guard let toViewVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to), let fromViewVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from) else {
             return
         }
         
-        containerView.insertSubview(toViewVC.view, belowSubview: fromViewVC.view)
+        transitionContext.containerView.insertSubview(toViewVC.view, belowSubview: fromViewVC.view)
         
-        UIView.transitionFromView(fromViewVC.view, toView: toViewVC.view, duration: transitionDuration(transitionContext), options: .TransitionCurlUp, completion: {completed in
+        UIView.transition(from: fromViewVC.view, to: toViewVC.view, duration: transitionDuration(using: transitionContext), options: .transitionCurlUp, completion: {completed in
             fromViewVC.view.removeFromSuperview()
             // when presenting
             transitionContext.completeTransition(completed)
         })
     }
     
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 1.0
     }
 }
