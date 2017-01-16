@@ -5,9 +5,9 @@ Implementation of custom UIViewController transitions. The goal of this project 
 
 ### Prerequisites
 
-Xcode 7.3
+Xcode 8
 
-Swift 2.2
+Swift 2
 
 ### Running the animations
 There are four custom view controller transitions implemented in the project.
