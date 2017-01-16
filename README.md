@@ -7,7 +7,7 @@ Implementation of custom UIViewController transitions. The goal of this project 
 
 Xcode 8
 
-Swift 2
+Swift 3
 
 ### Running the animations
 There are four custom view controller transitions implemented in the project.
