@@ -28,9 +28,22 @@ class custom_viewcontroller_transitionsUITests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testPushTransition() {
+        let app = XCUIApplication()
+        app.buttons["Push"].tap()
+        app.navigationBars["View Controller"].buttons["Title"].tap()
     }
     
+    func testPresentTransition() {
+        let app = XCUIApplication()
+        app.buttons["Present"].tap()
+        app.children(matching: .window).element(boundBy: 0).children(matching: .other).element.swipeDown()
+    }
+    
+    func testTabBarTransition() {
+        let app = XCUIApplication()
+        let tabBarsQuery = app.tabBars
+        tabBarsQuery.buttons["Favorites"].tap()
+        tabBarsQuery.buttons["Most Recent"].tap()
+    }
 }
